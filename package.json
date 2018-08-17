@@ -1,0 +1,33 @@
+{
+  "name": "react-destructuring-assignment-codemod",
+  "version": "0.1.0",
+  "description": "A jscodeshift codemod to destructure assignments of props, state, and context",
+  "author": "Thibaud Colas",
+  "license": "MIT",
+  "homepage": "https://github.com/thibaudcolas/react-destructuring-assignment-codemod",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thibaudcolas/react-destructuring-assignment-codemod.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thibaudcolas/react-destructuring-assignment-codemod/issues"
+  },
+  "keywords": [
+    "codemod",
+    "react",
+    "jscodeshift",
+    "eslint"
+  ],
+  "main": "./src/react-destructuring-assignment.js",
+  "devDependencies": {
+    "@commitlint/cli": "^7.0.0",
+    "@commitlint/config-conventional": "^7.0.1",
+    "prettier": "^1.13.7"
+  },
+  "scripts": {
+    "postinstall": "./.githooks/deploy.sh",
+    "lint": "prettier --list-different '**/*.{md,css,js,json}'",
+    "format": "prettier --write '**/*.{md,css,js,json}'",
+    "test:ci": "npm run lint -s"
+  }
+}
