@@ -2,89 +2,134 @@
 
 jest.autoMockOff();
 
-const { defineInlineTest } = require("jscodeshift/dist/testUtils");
+const { runInlineTest } = require("jscodeshift/dist/testUtils");
 
 const transform = require("./destructuring-assignment");
 
+const compare = (input, output) =>
+  runInlineTest(transform, {}, { source: input }, output);
+
 describe("destructuring-assignment", () => {
-  defineInlineTest(
-    transform,
-    {},
-    `function doSomething(props) {
+  it("doNothing", () => {
+    compare(
+      `function doNothing(props) {
       return props;
     }`,
-    `function doSomething(props) {
+      `function doNothing(props) {
       return props;
     }`,
-  );
-  defineInlineTest(
-    transform,
-    {},
-    `class ShouldDestructureClass extends React.Component {
+    );
+  });
+
+  it.skip("ShouldDestructure", () => {
+    compare(
+      `function ShouldDestructure(props) {
+      return <div className={props.foo} />;
+    }`,
+      `function ShouldDestructure({ foo }) {
+      return <div className={foo} />;
+    }`,
+    );
+  });
+
+  it("ShouldDestructureClass", () => {
+    compare(
+      `class ShouldDestructureClass extends React.Component {
       render() {
         return <div className={this.props.foo} />;
       }
     }`,
-    `class ShouldDestructureClass extends React.Component {
+      `class ShouldDestructureClass extends React.Component {
       render() {
         const { foo } = this.props;
         return <div className={foo} />;
       }
     }`,
-  );
-  // defineInlineTest(
-  //   transform,
-  //   {},
-  //   `class ShouldDestructureAndRemoveDuplicateDeclarationClass extends React.Component {
-  //     render() {
-  //       const fizz = { buzz: "buzz" };
-  //       const bar = this.props.bar;
-  //       const baz = this.props.bizzaz;
-  //       const buzz = fizz.buzz;
-  //       return <div className={this.props.foo} bar={bar} baz={baz} buzz={buzz} />;
-  //     }
-  //   }`,
-  //   `class ShouldDestructureAndRemoveDuplicateDeclarationClass extends React.Component {
-  //     render() {
-  //       const {
-  //         bar,
-  //         bizzaz,
-  //         foo
-  //       } = this.props;
-  //       const fizz = { buzz: "buzz" };
-  //       const baz = bizzaz;
-  //       const buzz = fizz.buzz;
-  //       return <div className={foo} bar={bar} baz={baz} buzz={buzz} />;
-  //     }
-  //   }`,
-  // );
-  defineInlineTest(
-    transform,
-    {},
-    `class UsesThisDotProps extends React.Component {
+    );
+  });
+
+  it("ShouldDestructureClassConstructor", () => {
+    compare(
+      `class ShouldDestructureClassConstructor extends React.Component {
+      constructor(props) {
+        super(props);
+
+        console.log(this.props.foo);
+      }
+      render() {
+        const { foo } = this.props;
+        return <div className={foo} />;
+      }
+    }`,
+      `class ShouldDestructureClassConstructor extends React.Component {
+      constructor(props) {
+        super(props);
+        const { foo } = this.props;
+
+        console.log(foo);
+      }
+      render() {
+        const { foo } = this.props;
+        return <div className={foo} />;
+      }
+    }`,
+    );
+  });
+
+  it.skip("ShouldDestructureAndRemoveDuplicateDeclarationClass", () => {
+    compare(
+      `class ShouldDestructureAndRemoveDuplicateDeclarationClass extends React.Component {
+      render() {
+        const fizz = { buzz: "buzz" };
+        const bar = this.props.bar;
+        const baz = this.props.bizzaz;
+        const buzz = fizz.buzz;
+        return <div className={this.props.foo} bar={bar} baz={baz} buzz={buzz} />;
+      }
+    }`,
+      `class ShouldDestructureAndRemoveDuplicateDeclarationClass extends React.Component {
+      render() {
+        const {
+          bar,
+          bizzaz,
+          foo
+        } = this.props;
+        const fizz = { buzz: "buzz" };
+        const baz = bizzaz;
+        const buzz = fizz.buzz;
+        return <div className={foo} bar={bar} baz={baz} buzz={buzz} />;
+      }
+    }`,
+    );
+  });
+
+  it("UsesThisDotProps", () => {
+    compare(
+      `class UsesThisDotProps extends React.Component {
       render() {
         doSomething(this.props);
         return <div className={this.props.foo} />;
       }
     }`,
-    `class UsesThisDotProps extends React.Component {
+      `class UsesThisDotProps extends React.Component {
       render() {
         const { foo } = this.props;
         doSomething(this.props);
         return <div className={foo} />;
       }
     }`,
-  );
-  defineInlineTest(
-    transform,
-    {},
-    `class DestructuresThisDotProps extends React.Component {
+    );
+  });
+
+  it("DestructuresThisDotProps", () => {
+    compare(
+      `class DestructuresThisDotProps extends React.Component {
       render() {
         const { bar } = this.props;
         return <div className={this.props.foo} bar={bar} />;
       }
     }`,
-    `class DestructuresThisDotProps extends React.Component {
+      `class DestructuresThisDotProps extends React.Component {
       render() {
         const {
           bar,
@@ -93,40 +138,43 @@ describe("destructuring-assignment", () => {
         return <div className={foo} bar={bar} />;
       }
     }`,
-  );
-  defineInlineTest(
-    transform,
-    {},
-    `const shadow = "shadow";
+    );
+  });
+
+  it("HasShadowPropsClass", () => {
+    compare(
+      `const shadow = "shadow";
 
     class HasShadowPropsClass extends React.Component {
       render() {
         return <div shadow={shadow} propsShadow={this.props.shadow} />;
       }
     }`,
-    `const shadow = "shadow";
+      `const shadow = "shadow";
 
     class HasShadowPropsClass extends React.Component {
       render() {
         return <div shadow={shadow} propsShadow={this.props.shadow} />;
       }
     }`,
-  );
-  defineInlineTest(
-    transform,
-    {},
-    `class PureWithTypesClass extends React.Component {
+    );
+  });
+
+  it("PureWithTypesClass", () => {
+    compare(
+      `class PureWithTypesClass extends React.Component {
       props: { foo: string };
       render() {
         return <div className={this.props.foo} />;
       }
     }`,
-    `class PureWithTypesClass extends React.Component {
+      `class PureWithTypesClass extends React.Component {
       props: { foo: string };
       render() {
         const { foo } = this.props;
         return <div className={foo} />;
       }
     }`,
-  );
+    );
+  });
 });

@@ -83,6 +83,7 @@ module.exports = function(file, api) {
   return (
     j(file.source)
       .find(j.FunctionExpression)
+      // TODO This should only be necessary for SFCs?
       // .filter(p => !needsThisDotProps(j(p.value.body.body)))
       .filter(p => !hasAssignmentsThatShadowProps(j(p.value.body.body)))
       .replaceWith(p => {
@@ -187,6 +188,13 @@ module.exports = function(file, api) {
         // Otherwise, we'll have to create our own, as none were suitable for use.
         // Create the variable definition `const { xyz } = this.props;`
         const decl = statement`const { ${properties} } = this.props;`;
+
+        // const isConstructor = v =>
+        //   v.params.length === 1 && v.params[0].name === "props";
+
+        // if (isConstructor(p.value)) {
+        //   console.log(p.value.body.body);
+        // }
 
         // Add the variable definition to the top of the function expression body.
         return j.functionExpression(
