@@ -2,32 +2,46 @@
 
 var React = require("React");
 
-function render() {
-  return <div />;
+const shadow = "shadow";
+
+function doSomething(props) {
+  return props;
 }
 
-class Pure extends React.Component {
+class ShouldDestructure extends React.Component {
   render() {
     return <div className={this.props.foo} />;
   }
 }
 
-class Impure extends React.Component {
-  componentWillMount() {
-    // such impure
-  }
+class ShouldDestructureAndRemoveDuplicateDeclaration extends React.Component {
   render() {
+    const fizz = { buzz: "buzz" };
+    const bar = this.props.bar;
+    const baz = this.props.bizzaz;
+    const buzz = fizz.buzz;
+    return <div className={this.props.foo} bar={bar} baz={baz} buzz={buzz} />;
+  }
+}
+
+class UsesThisDotProps extends React.Component {
+  render() {
+    doSomething(this.props);
     return <div className={this.props.foo} />;
   }
 }
 
-class ImpureWithRef extends React.Component {
+class DestructuresThisDotProps extends React.Component {
+  // would be nice to destructure in this case
   render() {
-    return (
-      <div>
-        <span ref="spanasaurus" />
-      </div>
-    );
+    const { bar } = this.props;
+    return <div className={this.props.foo} bar={bar} />;
+  }
+}
+
+class HasShadowProps extends React.Component {
+  render() {
+    return <div shadow={shadow} propsShadow={this.props.shadow} />;
   }
 }
 
@@ -37,44 +51,3 @@ class PureWithTypes extends React.Component {
     return <div className={this.props.foo} />;
   }
 }
-
-type Props = { foo: string };
-
-class PureWithTypes2 extends React.Component {
-  props: Props;
-  render() {
-    return <div className={this.props.foo} />;
-  }
-}
-
-class ImpureClassProperty extends React.Component {
-  state = { foo: 2 };
-  render() {
-    return <div />;
-  }
-}
-
-class ImpureClassPropertyWithTypes extends React.Component {
-  state: { x: string };
-  render() {
-    return <div />;
-  }
-}
-
-class PureWithPropTypes extends React.Component {
-  static propTypes = { foo: React.PropTypes.string };
-  static foo = "bar";
-  render() {
-    return <div />;
-  }
-}
-
-class PureWithPropTypes2 extends React.Component {
-  props: { foo: string };
-  static propTypes = { foo: React.PropTypes.string };
-  render() {
-    return <div />;
-  }
-}
-
-var A = props => <div className={props.foo} />;

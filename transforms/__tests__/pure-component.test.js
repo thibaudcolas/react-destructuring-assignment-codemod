@@ -12,5 +12,22 @@
 
 jest.autoMockOff();
 const defineTest = require("jscodeshift/dist/testUtils").defineTest;
-defineTest(__dirname, "pure-component");
-// defineTest(__dirname, "react-destructuring-assignment");
+// defineTest(
+//   __dirname,
+//   "pure-component",
+//   {
+//     destructuring: true,
+//     silenceWarnings: true,
+//   },
+//   "pure-component",
+// );
+// defineTest(
+//   __dirname,
+//   "pure-component",
+//   { useArrows: true, silenceWarnings: true },
+//   "pure-component2",
+// );
+defineTest(__dirname, "pure-component", {
+  destructuring: true,
+  silenceWarnings: true,
+});

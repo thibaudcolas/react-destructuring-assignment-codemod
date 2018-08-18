@@ -2,68 +2,51 @@
 
 var React = require("React");
 
-function render() {
-  return <div />;
+const shadow = "shadow";
+
+function doSomething(props) {
+  return props;
 }
 
-function Pure(props) {
+function ShouldDestructure(
+  {
+    foo,
+  },
+) {
+  return <div className={foo} />;
+}
+
+function ShouldDestructureAndRemoveDuplicateDeclaration(
+  {
+    bar,
+    bizzaz,
+    foo,
+  },
+) {
+  const fizz = { buzz: "buzz" };
+  const baz = bizzaz;
+  const buzz = fizz.buzz;
+  return <div className={foo} bar={bar} baz={baz} buzz={buzz} />;
+}
+
+function UsesThisDotProps(props) {
+  doSomething(props);
   return <div className={props.foo} />;
 }
 
-class Impure extends React.Component {
-  componentWillMount() {
-    // such impure
-  }
-  render() {
-    return <div className={this.props.foo} />;
-  }
+function DestructuresThisDotProps(props) {
+  const { bar } = props;
+  return <div className={props.foo} bar={bar} />;
 }
 
-class ImpureWithRef extends React.Component {
-  render() {
-    return (
-      <div>
-        <span ref="spanasaurus" />
-      </div>
-    );
-  }
+function HasShadowProps(props) {
+  return <div shadow={shadow} propsShadow={props.shadow} />;
 }
 
-function PureWithTypes(props: { foo: string }) {
-  return <div className={props.foo} />;
+function PureWithTypes(
+  {
+    foo: string,
+  },
+) {
+  return <div className={foo} />;
 }
-
-type Props = { foo: string };
-
-function PureWithTypes2(props: Props) {
-  return <div className={props.foo} />;
-}
-
-class ImpureClassProperty extends React.Component {
-  state = { foo: 2 };
-  render() {
-    return <div />;
-  }
-}
-
-class ImpureClassPropertyWithTypes extends React.Component {
-  state: { x: string };
-  render() {
-    return <div />;
-  }
-}
-
-function PureWithPropTypes(props) {
-  return <div />;
-}
-
-PureWithPropTypes.propTypes = { foo: React.PropTypes.string };
-PureWithPropTypes.foo = "bar";
-
-function PureWithPropTypes2(props: { foo: string }) {
-  return <div />;
-}
-
-PureWithPropTypes2.propTypes = { foo: React.PropTypes.string };
-
-var A = props => <div className={props.foo} />;

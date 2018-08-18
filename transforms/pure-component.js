@@ -1,3 +1,4 @@
+// See https://github.com/reactjs/react-codemod/blob/master/transforms/pure-component.js.
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -279,7 +280,7 @@ module.exports = function(file, api, options) {
     const statics = p.value.body.body.filter(isStaticProperty);
     const destructure = destructuringEnabled && canDestructure(j(renderMethod));
 
-    if (destructuringEnabled && !destructure) {
+    if (destructuringEnabled && !destructure && !silenceWarnings) {
       console.warn(`Unable to destructure ${name} props.`);
     }
 

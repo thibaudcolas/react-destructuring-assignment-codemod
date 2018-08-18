@@ -4,37 +4,23 @@ var React = require("React");
 
 const shadow = "shadow";
 
-function doSomething(props) {
-  return props;
-}
-
-function ShouldDestsructure(
-  {
-    foo,
-  },
-) {
+function ShouldDestructure({ foo }) {
   return <div className={foo} />;
 }
 
-function ShouldDestructureAndRemoveDuplicateDeclaration(
-  {
-    bar,
-    bizzaz,
-    foo,
-  },
-) {
+function ShouldDestructureAndRemoveDuplicateDeclaration({ bar, bizzaz, foo }) {
   const fizz = { buzz: "buzz" };
   const baz = bizzaz;
   const buzz = fizz.buzz;
   return <div className={foo} bar={bar} baz={baz} buzz={buzz} />;
 }
 
-function UsesThisDotProps(props) {
+function UsesProps(props) {
   doSomething(props);
   return <div className={props.foo} />;
 }
 
-function DestructuresThisDotProps(props) {
+function DestructuresProps(props) {
   const { bar } = props;
   return <div className={props.foo} bar={bar} />;
 }
@@ -43,10 +29,6 @@ function HasShadowProps(props) {
   return <div shadow={shadow} propsShadow={props.shadow} />;
 }
 
-function PureWithTypes(
-  {
-    foo: string,
-  },
-) {
+function PureWithTypes({ foo: string }) {
   return <div className={foo} />;
 }
