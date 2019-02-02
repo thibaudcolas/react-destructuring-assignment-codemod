@@ -2,6 +2,10 @@
 
 > A jscodeshift codemod to destructure assignments of props, state, and context
 
+**🚧this project is a work in progress. Check out https://github.com/yannvr/codemods for a similar attempt.**
+
+---
+
 ## Usage
 
 ```sh
